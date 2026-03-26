@@ -10,12 +10,13 @@ import { User } from "./models/User";
 import nodemailer from "nodemailer";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
 import { ProductInfo } from "../server/models/ProductInfo";
+import { Item } from "./models/Item";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes
   app.post("/api/auth/register", async (req, res) => {
     try {
-      
+
       const userData = insertUserSchema.parse(req.body);
       console.log(userData);
       // Check if user already exists
@@ -31,7 +32,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Hash password
       const hashedPassword = await bcrypt.hash(userData.password, 10);
-      
+
       // Create user
       const user = await storage.createUser({
         ...userData,
@@ -50,59 +51,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-// JUST Testing -----------------------------------------------------------------------------------------------------------------
-app.get("/test-email", async (req, res) => {
-  try {
-    const transporter = nodemailer.createTransport(
-  {
-    host: process.env.EMAIL_HOST,   // e.g. smtp.gmail.com
-    port: Number(process.env.EMAIL_PORT), // 587
-    secure: false,                  // true for 465
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  } as SMTPTransport.Options // ✅ cast fixes the TS error
-);
+  // JUST Testing -----------------------------------------------------------------------------------------------------------------
+  app.get("/test-email", async (req, res) => {
+    try {
+      const transporter = nodemailer.createTransport(
+        {
+          host: process.env.EMAIL_HOST,   // e.g. smtp.gmail.com
+          port: Number(process.env.EMAIL_PORT), // 587
+          secure: false,                  // true for 465
+          auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS,
+          },
+        } as SMTPTransport.Options // ✅ cast fixes the TS error
+      );
 
 
-// testing completed
+      // testing completed
 
-    const info = await transporter.sendMail({
-      from: `"Expiry Tracker" <${process.env.EMAIL_USER}>`,
-      to: "patelprincy4480@gmail.com",
-      subject: "Test Email ✅",
-      text: "If you are seeing this, your email setup works perfectly!",
-    });
+      const info = await transporter.sendMail({
+        from: `"Expiry Tracker" <${process.env.EMAIL_USER}>`,
+        to: "patelprincy4480@gmail.com",
+        subject: "Test Email ✅",
+        text: "If you are seeing this, your email setup works perfectly!",
+      });
 
-    console.log("Message sent: %s", info.messageId);
-    res.json({ success: true, message: "Test email sent!" });
+      console.log("Message sent: %s", info.messageId);
+      res.json({ success: true, message: "Test email sent!" });
 
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
 
 
 
-// hit this api to send test mail->http://localhost:8001/test-perfect-email-template
+  // hit this api to send test mail->http://localhost:8001/test-perfect-email-template
 
   app.get("/test-perfect-email-template", async (req, res) => {
 
 
-  try {
-    await sendExpiryNotification(
-      "harshpatel63540@gmail.com", // <-- put your test email
-      "Milk",
-      new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // expires in 2 days
-      2
-    );
-    res.send("✅ Test email sent!");
-  } catch (error) {
-    res.status(500).send("❌ Failed to send test email");
-  }
-});
+    try {
+      await sendExpiryNotification(
+        "harshpatel63540@gmail.com", // <-- put your test email
+        "Milk",
+        new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // expires in 2 days
+        2
+      );
+      res.send("✅ Test email sent!");
+    } catch (error) {
+      res.status(500).send("❌ Failed to send test email");
+    }
+  });
 
 
 
@@ -125,7 +126,7 @@ app.get("/test-email", async (req, res) => {
   app.post("/api/auth/login", async (req, res) => {
     try {
       const { email, password } = loginSchema.parse(req.body);
-      
+
       // Find user
       const user = await storage.getUserByEmail(email);
       if (!user) {
@@ -152,7 +153,7 @@ app.get("/test-email", async (req, res) => {
 
   app.get("/api/auth/me", authMiddleware, async (req: AuthRequest, res) => {
     try {
-       const user = await User.findById(req.userId).select("-password");
+      const user = await User.findById(req.userId).select("-password");
       console.log(user)
       if (!user) {
         return res.status(404).json({ message: "User not found" });
@@ -186,7 +187,7 @@ app.get("/test-email", async (req, res) => {
   //   }
   // });
 
-  
+
 
 
 
@@ -199,54 +200,54 @@ app.get("/test-email", async (req, res) => {
 
 
   //here is chatgpt route for implimenting scanning feature using barcode package
-//   app.post("/api/items", authMiddleware, async (req: AuthRequest, res) => {
-//     try {
-//       const itemData = insertItemSchema.parse(req.body);
-//       await ProductInfo.findOneAndUpdate(
-//   { barcode: itemData.barcode },
-//   {
-//     barcode: itemData.barcode,
-//     name: itemData.name,
-//     brand: itemData.brand,
-//     category: itemData.category
-//   },
-//   { upsert: true, new: true }  // <-- ensures product is saved only once
-// );
+  //   app.post("/api/items", authMiddleware, async (req: AuthRequest, res) => {
+  //     try {
+  //       const itemData = insertItemSchema.parse(req.body);
+  //       await ProductInfo.findOneAndUpdate(
+  //   { barcode: itemData.barcode },
+  //   {
+  //     barcode: itemData.barcode,
+  //     name: itemData.name,
+  //     brand: itemData.brand,
+  //     category: itemData.category
+  //   },
+  //   { upsert: true, new: true }  // <-- ensures product is saved only once
+  // );
 
-// // Existing item creation (untouched)
-// const item = await storage.createItem({ ...itemData, userId: req.userId! });
+  // // Existing item creation (untouched)
+  // const item = await storage.createItem({ ...itemData, userId: req.userId! });
 
-// res.status(201).json(item);
-//     } catch (error: any) {
-//       res.status(400).json({ message: error.message || "Failed to create item" });
-//     }
-//   });
-app.post("/api/items", authMiddleware, async (req: AuthRequest, res) => {
-  try {
-    const itemData = insertItemSchema.parse(req.body);
+  // res.status(201).json(item);
+  //     } catch (error: any) {
+  //       res.status(400).json({ message: error.message || "Failed to create item" });
+  //     }
+  //   });
+  app.post("/api/items", authMiddleware, async (req: AuthRequest, res) => {
+    try {
+      const itemData = insertItemSchema.parse(req.body);
 
-    // Save item
-    const item = await storage.createItem({ ...itemData, userId: req.userId! });
+      // Save item
+      const item = await storage.createItem({ ...itemData, userId: req.userId! });
 
-    // ⭐ AFTER SAVING ITEM → Save product metadata
-    if (itemData.barcode) {
-      await ProductInfo.findOneAndUpdate(
-        { barcode: itemData.barcode },
-        {
-          barcode: itemData.barcode,
-          name: itemData.name,
-          brand: itemData.brand,
-          category: itemData.category,
-        },
-        { upsert: true }  // create if not exists
-      );
+      // ⭐ AFTER SAVING ITEM → Save product metadata
+      if (itemData.barcode) {
+        await ProductInfo.findOneAndUpdate(
+          { barcode: itemData.barcode },
+          {
+            barcode: itemData.barcode,
+            name: itemData.name,
+            brand: itemData.brand,
+            category: itemData.category,
+          },
+          { upsert: true }  // create if not exists
+        );
+      }
+
+      res.status(201).json(item);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message || "Failed to create item" });
     }
-
-    res.status(201).json(item);
-  } catch (error: any) {
-    res.status(400).json({ message: error.message || "Failed to create item" });
-  }
-});
+  });
 
 
 
@@ -264,7 +265,7 @@ app.post("/api/items", authMiddleware, async (req: AuthRequest, res) => {
 
 
 
-  
+
 
   app.put("/api/items/:id", authMiddleware, async (req: AuthRequest, res) => {
     try {
@@ -272,7 +273,7 @@ app.post("/api/items", authMiddleware, async (req: AuthRequest, res) => {
 
       const updates = insertItemSchema.partial().parse(req.body);
       const item = await storage.updateItem(id, req.userId!, updates);
-      
+
       if (!item) {
         return res.status(404).json({ message: "Item not found" });
       }
@@ -287,7 +288,7 @@ app.post("/api/items", authMiddleware, async (req: AuthRequest, res) => {
     try {
       const { id } = req.params;
       const success = await storage.deleteItem(id, req.userId!);
-      
+
       if (!success) {
         return res.status(404).json({ message: "Item not found" });
       }
@@ -305,7 +306,7 @@ app.post("/api/items", authMiddleware, async (req: AuthRequest, res) => {
     try {
       const items = await storage.getItems(req.userId!);
       const now = new Date();
-      
+
       const stats = {
         totalItems: items.length,
         expiringSoon: items.filter(item => {
@@ -342,7 +343,7 @@ app.post("/api/items", authMiddleware, async (req: AuthRequest, res) => {
   app.get("/api/items/export", authMiddleware, async (req: AuthRequest, res) => {
     try {
       const items = await storage.getItems(req.userId!);
-      
+
       // Create CSV content
       const headers = ['Name', 'Brand', 'Category', 'Quantity', 'Expiry Date', 'Status', 'Notes'];
       const csvContent = [
@@ -351,11 +352,11 @@ app.post("/api/items", authMiddleware, async (req: AuthRequest, res) => {
           const now = new Date();
           const expiryDate = new Date(item.expiryDate);
           const daysUntilExpiry = Math.ceil((expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-          
+
           let status = 'Safe';
           if (daysUntilExpiry <= 0) status = 'Expired';
           else if (daysUntilExpiry <= 7) status = 'Expiring Soon';
-          
+
           return [
             `"${item.name}"`,
             `"${item.brand || ''}"`,
@@ -380,7 +381,7 @@ app.post("/api/items", authMiddleware, async (req: AuthRequest, res) => {
   app.put("/api/settings/notifications", authMiddleware, async (req: AuthRequest, res) => {
     try {
       const { notificationsEnabled } = req.body;
-      
+
       const user = await storage.updateUser(req.userId!, { notificationsEnabled });
       if (!user) {
         return res.status(404).json({ message: "User not found" });
@@ -395,22 +396,86 @@ app.post("/api/items", authMiddleware, async (req: AuthRequest, res) => {
 
 
 
+  // });
+app.get("/api/analytics/summary", authMiddleware, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.userId!;
+    const items = await Item.find({ userId });
+
+    const now = new Date();
+
+    let expired = 0;
+    let expiringSoon = 0;
+    let safe = 0;
+    let totalWasteCost = 0;
+
+    const categoryCounts: Record<string, number> = {};
+    const monthlyExpired: Record<string, number> = {};
+
+    items.forEach((item) => {
+      const expiryDate = new Date(item.expiryDate);
+      const daysLeft = Math.ceil(
+        (expiryDate.getTime() - now.getTime()) /
+        (1000 * 60 * 60 * 24)
+      );
+
+      // ✅ FIXED (ONLY ONE BLOCK)
+      if (daysLeft < 0) {
+        expired++;
+
+        totalWasteCost += (item.price || 0) * (item.quantity || 1);
+
+        const monthKey = expiryDate.toLocaleString("default", {
+          month: "short",
+          year: "numeric",
+        });
+
+        monthlyExpired[monthKey] =
+          (monthlyExpired[monthKey] || 0) + 1;
+      } 
+      else if (daysLeft <= 7) {
+        expiringSoon++;
+      } 
+      else {
+        safe++;
+      }
+
+      // Category count
+      categoryCounts[item.category] =
+        (categoryCounts[item.category] || 0) + 1;
+    });
+
+    res.json({
+      total: items.length,
+      expired,
+      expiringSoon,
+      safe,
+      totalWasteCost,
+      categoryCounts,
+      monthlyExpired,
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Analytics error" });
+  }
+});
 
   // tring to impliment scanning feature using pacakge 
   app.get("/api/products/:barcode", async (req, res) => {
-  const { barcode } = req.params;
+    const { barcode } = req.params;
 
-  const product = await ProductInfo.findOne({ barcode });
+    const product = await ProductInfo.findOne({ barcode });
 
-  if (!product) {
-    return res.json({ exists: false });  // <-- indicate no product found
-  }
+    if (!product) {
+      return res.json({ exists: false });  // <-- indicate no product found
+    }
 
-  return res.json({
-    exists: true,
-    product
+    return res.json({
+      exists: true,
+      product
+    });
   });
-});
 
 
 

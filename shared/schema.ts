@@ -19,6 +19,7 @@ export const items = pgTable("items", {
   brand: text("brand"),
   category: text("category").notNull(),
   quantity: integer("quantity").notNull().default(1),
+    price: integer("price").notNull().default(0), // ✅ ADD THIS
   expiryDate: timestamp("expiry_date").notNull(),
   notes: text("notes"),
   barcode: text("barcode"),
@@ -49,6 +50,7 @@ export const insertItemSchema = createInsertSchema(items).omit({
   expiryDate: z.string().min(1, "Expiry date is required"),
   category: z.enum(["groceries", "medicines", "cosmetics", "household", "other"]),
   quantity: z.number().min(1, "Quantity must be at least 1"),
+  price: z.number().min(0, "Price must be positive"), // ✅ ADD HERE
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;

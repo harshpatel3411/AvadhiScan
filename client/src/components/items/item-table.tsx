@@ -249,13 +249,13 @@ export default function ItemTable() {
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-1">
-                        <Button
+                        {/* <Button
                           variant="ghost"
                           size="sm"
                           data-testid={`button-edit-${item._id}`}
                         >
                           <Edit className="h-4 w-4" />
-                        </Button>
+                        </Button> */}
                         <Button
                           variant="ghost"
                           size="sm"

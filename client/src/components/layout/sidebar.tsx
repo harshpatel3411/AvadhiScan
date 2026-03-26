@@ -1,9 +1,9 @@
-import { Link, useLocation } from 'wouter';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { useQuery } from '@tanstack/react-query';
-import { logout } from '@/lib/auth';
+import { Link, useLocation } from "wouter";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useQuery } from "@tanstack/react-query";
+import { logout } from "@/lib/auth";
 import {
   Calendar,
   Package,
@@ -12,23 +12,28 @@ import {
   Bell,
   Settings,
   LayoutDashboard,
-  LogOut
-} from 'lucide-react';
+  LogOut,
+} from "lucide-react";
 
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'My Items', href: '/items', icon: Package },
-  { name: 'Add Item', href: '/add-item', icon: Plus },
-  { name: 'Barcode Scanner', href: '/scanner', icon: Scan },
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "My Items", href: "/items", icon: Package },
+  { name: "Add Item", href: "/add-item", icon: Plus },
+  { name: "Barcode Scanner", href: "/scanner", icon: Scan },
+  { name: "Analytics", href: "/analytics", icon: Calendar },
   // { name: 'Notifications', href: '/notifications', icon: Bell },
   // { name: 'Settings', href: '/settings', icon: Settings },
 ];
 
 export default function Sidebar() {
   const [location] = useLocation();
-  
-  const { data: user } = useQuery<{ id: string; username: string; email: string }>({
-    queryKey: ['/api/auth/me'],
+
+  const { data: user } = useQuery<{
+    id: string;
+    username: string;
+    email: string;
+  }>({
+    queryKey: ["/api/auth/me"],
   });
 
   const handleLogout = () => {
@@ -50,16 +55,16 @@ export default function Sidebar() {
         {navigation.map((item) => {
           const Icon = item.icon;
           const isActive = location === item.href;
-          
+
           return (
             <Link key={item.name} href={item.href}>
               <Button
                 variant={isActive ? "default" : "ghost"}
                 className={cn(
                   "w-full justify-start gap-2",
-                  isActive && "bg-primary text-primary-foreground"
+                  isActive && "bg-primary text-primary-foreground",
                 )}
-                data-testid={`nav-${item.name.toLowerCase().replace(' ', '-')}`}
+                data-testid={`nav-${item.name.toLowerCase().replace(" ", "-")}`}
               >
                 <Icon className="h-5 w-5" />
                 {item.name}
@@ -74,12 +79,14 @@ export default function Sidebar() {
         <div className="flex items-center gap-3 p-3 rounded-lg bg-background">
           <Avatar>
             <AvatarFallback>
-              {user?.username?.charAt(0).toUpperCase() || 'U'}
+              {user?.username?.charAt(0).toUpperCase() || "U"}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium truncate">{user?.username}</p>
-            <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+            <p className="text-xs text-muted-foreground truncate">
+              {user?.email}
+            </p>
           </div>
           <Button
             variant="ghost"

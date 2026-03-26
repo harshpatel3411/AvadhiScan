@@ -30,6 +30,11 @@ const itemSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  price: {
+  type: Number,
+  required: true,
+  default: 0
+},
   notes: {
     type: String,
     trim: true,

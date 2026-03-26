@@ -10,14 +10,15 @@ const EMAIL_PORT = parseInt(process.env.EMAIL_PORT || '587');
 const transporter = nodemailer.createTransport({
   host: EMAIL_HOST,
   port: EMAIL_PORT,
-  secure: EMAIL_PORT === 465,
+  secure: false, // Always false for 587
   auth: {
     user: EMAIL_USER,
     pass: EMAIL_PASS,
   },
+  tls: {
+    rejectUnauthorized: false, // FIXES self-signed certificate error
+  },
 });
-
-
 
 
 export const sendExpiryNotification = async (

@@ -13,6 +13,7 @@ import AddItem from "@/pages/add-item";
 import Scanner from "@/pages/scanner";
 import Settings from "@/pages/settings";
 import NotFound from "@/pages/not-found";
+import Analytics from "@/pages/analytics";
 
 // Update query client to include auth headers
 import { getAuthToken } from "./lib/auth";
@@ -57,6 +58,13 @@ function Router() {
         </AuthGuard>
       </Route>
       
+
+    <Route path="/analytics">
+  <AuthGuard>
+    <Analytics />
+  </AuthGuard>
+</Route>
+
       <Route path="/items">
         <AuthGuard>
           <Items />

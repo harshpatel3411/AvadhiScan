@@ -80,7 +80,7 @@ export default function Register() {
         <CardHeader className="text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Calendar className="h-8 w-8 text-primary" />
-            <h1 className="text-2xl font-bold text-primary">Expiry Tracker</h1>
+            <h1 className="text-2xl font-bold text-primary">AvadhiScan</h1>
           </div>
           <CardTitle>Create Account</CardTitle>
         </CardHeader>
